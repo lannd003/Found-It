@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add-Listing</title>
+  <link rel="stylesheet" href="../CSS/AddList.css">
+  <link rel="icon" href="../Images/Found It! Logo.png" type="image/x-icon">
+  <link href="https://api.fontshare.com/v2/css?f[]=tanker@400&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@600&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="logo">
+    <a href="../HTML/Homepage.html"><img src="../Images/Found It! Logo - Reimagined.png"></a>
+    <h1>FOUND IT!</h1>
+  </div>
+
+  <div class="Add-list-form">
+    <h2>Add List</h2>
+    <form id="addListingForm">
+
+      <label for="buttons">Status</label>
+      <div class="status">
+        <button class="button-lost" type="button" id="lost-button">LOST</button>
+        <button class="button-found" type="button" id="found-button">FOUND</button>
+      </div>
+
+      <label for="name">Item Name</label>
+      <input type="text" id="name" name="name" placeholder="Item name" required>
+
+      <label for="item">Item Description</label>
+      <input class="description-div" type="text" id="item" name="item" placeholder="Briefly describe the lost item..." required>
+ 
+      <label for="location">Item Found Location</label>
+      <input type="text" id="location" name="location" placeholder="Found location" required>
+
+      <label for="founder">Founder Name</label>
+      <input type="text" id="founder" name="founder" placeholder="Your full name..." required>
+ 
+      <label for="tel">Phone Number</label>
+      <input type="tel" name="tel" id="tel" placeholder="Enter number" required>
+
+      <div class="picture-div">
+        <input type="file" id="image" name="image" hidden="hidden" accept="image/*" required>
+        <button type="button" id="file-button">UPLOAD FILE</button>
+        <span id="custom-text">No File Chosen</span>
+      </div>
+
+      <input type="submit" value="Submit" id="submit-button">
+
+    </form>
+  </div>
+
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+      const fileBtn = document.getElementById("image");
+      const customBtn = document.getElementById("file-button");
+      const customTxt = document.getElementById("custom-text");
+
+      customBtn.addEventListener("click", function() {
+        fileBtn.click();
+      });
+      fileBtn.addEventListener("change", function() {
+        if (fileBtn.files && fileBtn.files[0]) {
+          const reader = new FileReader();
+
+          reader.onload = function(event) {
+            customTxt.innerHTML = fileBtn.files[0].name;
+            customTxt.style.display = 'block';
+
+            localStorage.setItem('uploadedImage', event.target.result);
+          };
+
+          reader.readAsDataURL(fileBtn.files[0]);
+        } else {
+          customTxt.innerHTML = "No file chosen";
+        }
+      });
+
+      const lostBtn = document.getElementById('lost-button');
+      lostBtn.addEventListener('click', function() {
+        localStorage.setItem('status', 'LOST');
+      });
+
+      const foundBtn = document.getElementById('found-button');
+      foundBtn.addEventListener('click', function() {
+        localStorage.setItem('status', 'FOUND');
+      });
+
+      const form = document.getElementById('addListingForm');
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const listings = JSON.parse(localStorage.getItem('listings')) || [];
+
+        listings.push({
+          itemName: document.getElementById('name').value,
+          itemDescription: document.getElementById('item').value,
+          itemLocation: document.getElementById('location').value,
+          founderName: document.getElementById('founder').value,
+          phoneNumber: document.getElementById('tel').value,
+          imageUrl: localStorage.getItem('uploadedImage'),
+          status: localStorage.getItem('status'),
+          date: new Date().toLocaleString()
+        });
+
+        localStorage.setItem('listings', JSON.stringify(listings));
+        
+        window.location.href = 'listings.html';
+      });
+    });
+  </script>
+
+</body>
+</html>
